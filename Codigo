@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <random>
+
+using Reloj = std::chrono::high_resolution_clock;
+
+int busquedaLineal(const std::vector<int>& datos, int valor) {
+    for (std::size_t i = 0; i < datos.size(); ++i)
+        if (datos[i] == valor) return static_cast<int>(i);
+    return -1;
+}
+
+int busquedaBinaria(const std::vector<int>& datos, int valor) {
+    int izq = 0, der = static_cast<int>(datos.size()) - 1;
+    while (izq <= der) {
+        int medio = izq + (der - izq) / 2;
+        if (datos[medio] == valor) return medio;
+        else if (datos[medio] < valor) izq = medio + 1;
+        else der = medio - 1;
+    }
+    return -1;
+}
+
+int busquedaTrinaria(const std::vector<int>& datos, int valor) {
+    int izq = 0, der = static_cast<int>(datos.size()) - 1;
+    while (izq <= der) {
+        int tercio = (der - izq) / 3;
+        int m1 = izq + tercio, m2 = der - tercio;
+        if (datos[m1] == valor) return m1;
+        if (datos[m2] == valor) return m2;
+        if (valor < datos[m1]) der = m1 - 1;
+        else if (valor > datos[m2]) izq = m2 + 1;
+        else { izq = m1 + 1; der = m2 - 1; }
+    }
+    return -1;
+}
+
+double medirPromedioNs(int (*algoritmo)(const std::vector<int>&, int),
+                        const std::vector<int>& datos, std::mt19937_64& rng) {
+    std::uniform_int_distribution<std::size_t> dist(0, datos.size() - 1);
+    double suma = 0.0;
+    for (int i = 0; i < 30; ++i) {
+        int valor = datos[dist(rng)];
+        auto inicio = Reloj::now();
+        algoritmo(datos, valor);
+        auto fin = Reloj::now();
+        suma += std::chrono::duration<double, std::nano>(fin - inicio).count();
+    }
+    return suma / 30.0;
+}
+
+int main() {
+    const std::vector<long long> tamanios = {100'000, 1'000'000, 10'000'000, 100'000'000};
+    std::mt19937_64 rng(42);
+
+    std::cout << "Tamano\t\tLineal(ns)\tBinaria(ns)\tTrinaria(ns)\n";
+
+    for (long long n : tamanios) {
+        std::vector<int> datos(n);
+        for (long long i = 0; i < n; ++i) datos[i] = i * 2;
+
+        double tLineal   = medirPromedioNs(busquedaLineal,   datos, rng);
+        double tBinaria  = medirPromedioNs(busquedaBinaria,  datos, rng);
+        double tTrinaria = medirPromedioNs(busquedaTrinaria, datos, rng);
+
+        std::cout << n << "\t" << tLineal << "\t" << tBinaria << "\t" << tTrinaria << "\n";
+    }
+    return 0;
+}
