@@ -1,6 +1,6 @@
 # Tarea-de-Ordenamiento
 
-4. Resultados
+Resultados
 ----------------------------------------------------------------------------------------
 Tamaño de entrada      Búsqueda Líneal     Búsqueda Binaria     Búsqueda Trinaria
 10^5                   15.44               0.158                0.153
@@ -9,7 +9,8 @@ Tamaño de entrada      Búsqueda Líneal     Búsqueda Binaria     Búsqueda Tr
 10^8                   41,006.80           2.286                1.303
 ----------------------------------------------------------------------------------------
 
-6. Análisis de resultados
+Análisis de resultados
+
 Comportamiento observado
 La búsqueda lineal crece de forma proporcional a n, al pasar de 10⁵ a 10⁸ elementos, su tiempo promedio pasa de 15.44 a 41 006.80, es decir, un incremento de aproximadamente 2 656×, consistente con un crecimiento O(n). Las búsquedas binaria y trinaria, en cambio, crecen de forma mucho más lenta, al mismo incremento de n (×1000), la búsqueda binaria pasa de 0.158 a 2.286 (×14.5) y la trinaria de 0.153 a 1.303 (×8.5), ambos incrementos cercanos al comportamiento logarítmico esperado, no al lineal.
 
